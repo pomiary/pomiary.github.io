@@ -28,8 +28,6 @@ jobs:
           lfs: true
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Install wget
-        run: sudo apt-get update && sudo apt-get install -y wget
       - name: Setup Go environment
         uses: actions/setup-go@v5.3.0
         with:
@@ -43,9 +41,8 @@ jobs:
           GOARCH=wasm GOOS=js go build -o ./app/web/app.wasm ./main/main.go &&
           BUILD_STATIC=true go build -o ./static_build ./main/main.go &&
           ./static_build &&
-          ls -ltrRa &&
           mv ./*.html ./*.webmanifest ./*.js ./*.css ./app &&
-          mv app ..
+          ls -ltrRa
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
