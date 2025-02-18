@@ -1,0 +1,20 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+  build-wasm:
+    cmds:
+      - go1.24.0.exe build -o web/app.wasm ./main
+    env:
+      GOOS: js
+      GOARCH: wasm
+  build-server:
+    cmds:
+      - go1.24.0.exe build -o ./server.exe ./main
+    env:
+  build:
+    cmds:
+      - task: build-wasm
+      - task: build-server
