@@ -150,7 +150,7 @@ func (c *ThermometerContainer) Render() app.UI {
 					"px-4 py-2 border"),
 			),
 		).Class("w-full border-collapse border border-sky-800"),
-	).Class("border border-sky-800 p-4 m-2 rounded w-1/4").ID(c.id)
+	).Class("border border-sky-800 p-4 m-2 rounded").ID(c.id)
 }
 
 type ExploreTable struct {
@@ -179,8 +179,8 @@ func (c *ExploreTable) Render() app.UI {
 			app.Tr().Body(
 				app.Td().Text("Czas").Class("px-4 py-2 border"),
 				app.Td().Text("Pokój").Class("px-4 py-2 border"),
-				app.Td().Text("Temperatura [°C]").Class("px-4 py-2 border"),
-				app.Td().Text("Wilgotność [%]").Class("px-4 py-2 border"),
+				app.Td().Text("Temp.").Class("px-4 py-2 border"),
+				app.Td().Text("Wilg.").Class("px-4 py-2 border"),
 			),
 			app.Range(c.measurements).Slice(func(index int) app.UI {
 				return app.Tr().Body(
@@ -191,7 +191,7 @@ func (c *ExploreTable) Render() app.UI {
 					app.Td().Text(fmt.Sprintf("%v", c.measurements[index].Humidity)).Class("px-4 py-2 border"),
 				)
 			}),
-		).Class("w-full border-collapse border border-sky-800"),
+		).Class("border-collapse border border-sky-800"),
 	)
 }
 
