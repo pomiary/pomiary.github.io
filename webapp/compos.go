@@ -85,7 +85,7 @@ func (b *ExploreButton) Render() app.UI {
 	return app.Div().Body(
 		app.Button().Text("Przeglądaj pomiary").OnClick(func(ctx app.Context, e app.Event) {
 			app.Window().Set("location", "explore")
-		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 rounded"),
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 my-2 rounded"),
 	)
 }
 
