@@ -158,8 +158,14 @@ type ExploreTable struct {
 	measurements []Measurement
 }
 
+func (c *ExploreTable) handleDataForChart(ctx app.Context, a app.Action) {
+	log.Println("handling ", a.Name)
+	ctx.NewActionWithValue("new-chart", ChartAction{Measurements: c.measurements})
+}
+
 func (c *ExploreTable) OnMount(ctx app.Context) {
 	ctx.Handle("loadMore", c.handleLoadMore)
+	ctx.Handle("send-data-for-chart", c.handleDataForChart)
 	ctx.Async(func() {
 		ctx.NewAction("show-measurements-loading")
 		m, err := Data(0)
@@ -199,7 +205,7 @@ func (c *ExploreTable) handleLoadMore(ctx app.Context, a app.Action) {
 	log.Println("handling ", a.Name)
 	var skip int
 	ctx.GetState("skip", &skip)
-	skip += 100
+	skip += 2000
 	ctx.SetState("skip", skip)
 	app.Window().GetElementByID("header-text").Set("innerHTML", "Ładowanie...")
 	ctx.Async(func() {
@@ -258,6 +264,8 @@ type ExploreContainer struct {
 
 func (c *ExploreContainer) Render() app.UI {
 	return app.Div().Body(
+		&ScrollToTopButton{},
+		&ScrollToBottomButton{},
 		&Header{},
 		app.Div().Body(
 			&ExploreTable{},
@@ -265,7 +273,130 @@ func (c *ExploreContainer) Render() app.UI {
 			&LoadMoreButton{},
 			&LoadingWidget{id: "measurements-loading"},
 			app.Br(),
+			&ChartContainer{},
+			app.Br(),
 			&HomeButton{},
+			app.Br(),
+			&Bottom{},
 		).Class("flex flex-col items-center p-4"),
 	)
+}
+
+type SensorsToChoose struct {
+	app.Compo
+}
+
+func (c *SensorsToChoose) Render() app.UI {
+	return app.Select().Body(
+		app.Range(Sensors).Map(func(k string) app.UI {
+			return app.Option().Value(k).Text(Sensors[k])
+		}),
+	).Class("my-1").ID("sensor-select")
+}
+
+type ParamsToChoose struct {
+	app.Compo
+}
+
+func (c *ParamsToChoose) Render() app.UI {
+	params := map[string]string{"humidity": "Wilgotność", "temperature": "Temperatura"}
+	return app.Select().Body(
+		app.Range(params).Map(func(k string) app.UI {
+			return app.Option().Value(k).Text(params[k])
+		}),
+	).Class("my-1").ID("param-select")
+}
+
+type ShowChartsButton struct {
+	app.Compo
+}
+
+func (c *ShowChartsButton) Render() app.UI {
+	return app.Div().Body(
+		app.Button().Text("Załaduj wykres z tabeli").OnClick(func(ctx app.Context, e app.Event) {
+			ctx.NewAction("send-data-for-chart")
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 my-2 rounded"),
+	)
+}
+
+type ChartContainer struct {
+	app.Compo
+	s        SensorsToChoose
+	p        ParamsToChoose
+	imageB64 string
+}
+
+func (c *ChartContainer) Render() app.UI {
+	return app.Div().Body(
+		app.Div().Body(
+			&c.s,
+			&c.p,
+			app.Br(),
+			&ShowChartsButton{},
+			app.Br(),
+			app.If(c.imageB64 != "", func() app.UI { return app.Img().Src(c.imageB64) }),
+			&LoadingWidget{id: "chart-loading"},
+		).Class("border border-sky-800 rounded flex flex-col items-center p-4 my-2"),
+	)
+}
+func (c *ChartContainer) OnMount(ctx app.Context) {
+	ctx.Handle("new-chart", c.handleLoadChart)
+}
+
+func (c *ChartContainer) handleLoadChart(ctx app.Context, a app.Action) {
+	log.Println("handling ", a.Name)
+	chart := a.Value.(ChartAction)
+	ctx.NewAction("show-chart-loading")
+	room := app.Window().GetElementByID("sensor-select").Get("value").String()
+	param := app.Window().GetElementByID("param-select").Get("value").String()
+	log.Println("room: ", room)
+	log.Println("param: ", param)
+	ms := []Measurement{}
+	for _, m := range chart.Measurements {
+		if m.Id == room {
+			ms = append(ms, m)
+		}
+	}
+	ctx.Async(func() {
+		p, err := Plot(ms, param)
+		ctx.Dispatch(func(ctx app.Context) {
+			if err != nil {
+				ErrAndExit(err.Error())
+			}
+			c.imageB64 = "data:image/png;base64," + p
+			ctx.NewAction("show-chart-loading")
+		})
+	})
+}
+
+type ScrollToBottomButton struct {
+	app.Compo
+}
+
+func (c *ScrollToBottomButton) Render() app.UI {
+	return app.Div().Body(
+		app.Button().Text("Przewiń na dół").OnClick(func(ctx app.Context, e app.Event) {
+			app.Window().ScrollToID("bottom")
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 rounded fixed bottom-4 right-4"),
+	)
+}
+
+type ScrollToTopButton struct {
+	app.Compo
+}
+
+func (c *ScrollToTopButton) Render() app.UI {
+	return app.Div().Body(
+		app.Button().Text("Przewiń do góry").OnClick(func(ctx app.Context, e app.Event) {
+			app.Window().ScrollToID("header")
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 rounded fixed bottom-16 right-4"),
+	)
+}
+
+type Bottom struct {
+	app.Compo
+}
+
+func (c *Bottom) Render() app.UI {
+	return app.Div().Body(app.P().Text("---")).ID("bottom")
 }

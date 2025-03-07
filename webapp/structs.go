@@ -7,3 +7,7 @@ type Measurement struct {
 	Voltage     float64 `json:"voltage"`
 	Timestamp   int     `json:"timestamp"`
 }
+
+type ChartAction struct {
+	Measurements []Measurement
+}
