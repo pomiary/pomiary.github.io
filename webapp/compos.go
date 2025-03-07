@@ -375,9 +375,9 @@ type ScrollToBottomButton struct {
 
 func (c *ScrollToBottomButton) Render() app.UI {
 	return app.Div().Body(
-		app.Button().Text("Przewiń na dół").OnClick(func(ctx app.Context, e app.Event) {
+		app.Button().Text("⬇️").OnClick(func(ctx app.Context, e app.Event) {
 			app.Window().ScrollToID("bottom")
-		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 rounded fixed bottom-4 right-4"),
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-2 rounded fixed bottom-4 right-4"),
 	)
 }
 
@@ -387,9 +387,9 @@ type ScrollToTopButton struct {
 
 func (c *ScrollToTopButton) Render() app.UI {
 	return app.Div().Body(
-		app.Button().Text("Przewiń do góry").OnClick(func(ctx app.Context, e app.Event) {
+		app.Button().Text("⬆️").OnClick(func(ctx app.Context, e app.Event) {
 			app.Window().ScrollToID("header")
-		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-4 rounded fixed bottom-16 right-4"),
+		}).Class("bg-sky-700 hover:bg-sky-800 font-bold py-2 px-2 rounded fixed bottom-16 right-4"),
 	)
 }
 
