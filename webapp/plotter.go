@@ -29,8 +29,9 @@ func Plot(m []Measurement, v string) (string, error) {
 
 	pts := make(plotter.XYs, len(m))
 
+	_, offset := time.Now().Zone()
 	for i := range pts {
-		timestamp := float64(m[i].Timestamp)
+		timestamp := float64(m[i].Timestamp + offset)
 		pts[i].X = timestamp
 		switch v {
 		case "temperature":
