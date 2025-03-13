@@ -6,13 +6,13 @@ tasks:
       - task --list-all
   build-wasm:
     cmds:
-      - go1.24.0.exe build -o web/app.wasm ./main
+      - go1.24.0 build -o web/app.wasm ./main
     env:
       GOOS: js
       GOARCH: wasm
   build-server:
     cmds:
-      - go1.24.0.exe build -o ./server.exe ./main
+      - go1.24.0 build -o ./server ./main
     env:
   build:
     cmds:
