@@ -41,7 +41,7 @@ func Run() {
 		err := app.GenerateStaticWebsite(".", &app.Handler{
 			Name:        "Pomiary",
 			Description: "Dane z termometrów Xiaomi",
-			Resources:   app.GitHubPages("pomiary"),
+			//Resources:   app.GitHubPages("pomiary"),
 			Styles: []string{
 				"/web/default_styles.css",
 			},
