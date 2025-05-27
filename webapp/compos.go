@@ -10,7 +10,6 @@ import (
 
 type InstallButton struct {
 	app.Compo
-	name             string
 	isAppInstallable bool
 }
 
