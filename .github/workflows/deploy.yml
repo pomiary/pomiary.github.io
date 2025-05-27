@@ -32,6 +32,11 @@ jobs:
         uses: actions/setup-go@v5.3.0
         with:
           go-version: '1.24.0'
+      - name: Install Tailwind CLI
+        run: |
+          wget https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.14/tailwindcss-linux-x64 &&
+          chmod +x tailwindcss-linux-x64 &&
+          sudo mv tailwindcss-linux-x64 /usr/bin/tailwindcss
       - name: Build static files
         env:
           BUILD_STATIC: "true"
@@ -41,6 +46,7 @@ jobs:
           GOARCH=wasm GOOS=js go build -o ./app/web/app.wasm ./main/main.go &&
           BUILD_STATIC=true go build -o ./static_build ./main/main.go &&
           ./static_build &&
+          tailwindcss -i ./app/web/tailwind-input.css -o ./app/web/style.css --minify &&
           mv ./*.html ./*.webmanifest ./*.js ./*.css ./app &&
           ls -ltrRa
       - name: Upload artifact
