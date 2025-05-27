@@ -45,9 +45,9 @@ func Run() {
 			Styles: []string{
 				"/web/default_styles.css",
 			},
-			Scripts: []string{
-				"https://cdn.tailwindcss.com",
-			},
+			//Scripts: []string{
+			//	"https://cdn.tailwindcss.com",
+			//},
 			Image: "/web/temperature.png",
 			Icon: app.Icon{
 				Maskable: "/web/temperature.png",
