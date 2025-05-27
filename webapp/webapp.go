@@ -44,6 +44,7 @@ func Run() {
 			//Resources:   app.GitHubPages("pomiary"),
 			Styles: []string{
 				"/web/default_styles.css",
+				"/web/style.css",
 			},
 			//Scripts: []string{
 			//	"https://cdn.tailwindcss.com",
